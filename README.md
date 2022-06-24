@@ -1,17 +1,49 @@
 # Disboard Server Search Backend
 
-### Repo navigation
+The python script found in `/scraper/scrape.py` is adapted from: https://github.com/DiscordFederation/DisboardScraper
 
-`/scraper/scrape_by_tag_and_page_count`
+## Usage 
 
-Scraper script is adapted from: https://github.com/DiscordFederation/DisboardScraper
-
-
-`/server/`
+We need to first set up the backend, the demo client, and the python script.
 
 
-`/client/`
+### Load the python script dependencies in the `scraper` directory:
 
-# Usage
+`cd scraper`
+
+Run a virtual shell:
+
+`pipenv shell`
+
+Install dependencies: 
+
+`pipenv install` 
+
+You might need to manually install `cloudscraper`:
+
+`pipenv install cloudscaper`
+
+
+### Set up the `express.js` server:
+
+`cd server`
+
+Install dependencies:
+
+`npm install`
+
+Run the server:
+
+`npm start` 
+
+
+### Front End Interaction (or you can use Postman/`curl`):
+
+`cd client` 
+
+`npm install` 
+
+`npm start`
+
 
 
