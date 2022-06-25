@@ -23,8 +23,11 @@ You might need to manually install `cloudscraper`:
 
 `pipenv install cloudscaper`
 
+**Note that you may need to manually install all the dependecies**
 
-### Set up the `express.js` server:
+---
+
+### Set up the `express.js` server and the front-end react client.
 
 `cd server`
 
@@ -36,14 +39,7 @@ Run the server:
 
 `npm start` 
 
-
-### Front End Interaction (or you can use Postman/`curl`):
-
-`cd client` 
-
-`npm install` 
-
-`npm start`
+THen repeat the same steps for `/client`. 
 
 
 

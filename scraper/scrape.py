@@ -1,5 +1,4 @@
 import sys
-# from io import StringIO
 import json
 import cloudscraper
 import discord
@@ -12,11 +11,13 @@ input_list = sys.argv
 # Set up url 
 tag = input_list[1]
 i = int(input_list[2])
-pages = i 
-# Note: max amount of pages allowed is 50
+pages = i # Note: max amount of pages allowed is 50
 
-# print(pages)
-# print(f'The type is: {type(pages)}')
+# debug
+# console.log(tag)
+# # console.log(i)
+# tag = "buffy"
+# pages = 2
 
 # Constants
 HEADERS = {'User-Agent': 'Mozilla/5.0'}
@@ -27,6 +28,8 @@ unique_servers = []
 
 # Iterate over each page for a tag
 for page in range(1, pages + 1):
+    print(tag)
+    print(page)
     url = f"https://disboard.org/servers/tag/{tag}/{page}?sort=-member_count"
     scraper = cloudscraper.create_scraper()
     resource = scraper.get(url).text
@@ -63,7 +66,7 @@ for page in range(1, pages + 1):
         ]
         server.extend(tags)
         
-        # Add each server found
+    #     # Add each server found
         servers.append(server)
 
 # Remove duplicates 
