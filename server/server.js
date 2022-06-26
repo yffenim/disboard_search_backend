@@ -37,6 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 // POST REQUEST
 app.post('/add', (req, res) =>{
   const json = req.body;
+  // const tags = [["first array item"]];
   const tags = [];
   const excludes = []; 
   
@@ -58,28 +59,19 @@ app.post('/add', (req, res) =>{
     arr.push(process);
   };
   const last = arr[arr.length-1];
-  // console.log(arr[0]);
-  // console.log(excludes);
 
-  // var arr = [];
-
-  // const tag = "buffy";
-
-  // const scraper_process = spawn('python', ['../scraper/scrape.py', tag, pages]);
-  // const last = spawn('python', ['../scraper/scrape.py', "charmed", pages]);
-  // arr.push(scraper_process);
-  // arr.push(last);
-
+  // make return object containing scraped servers
   var output;
   async function scrapeData (py, last, res) {
     output = '';
 
-    // WHY DOES THE WHILE LOOP NOT WORK HERE???
+    // WHY DOES MY OUTPUT CONTAIN TWO SETS OF EVERYTHING??
     for (let i = 0; i < py.length; i++) {
       py[i].stdin.setEncoding = 'utf-8';
       py[i].stdout.on('data', (data) => {
         // console.log(typeof data);
         output += data.toString();
+        // console.log(output);
         // console.log(typeof output);
       });
     
@@ -88,6 +80,7 @@ app.post('/add', (req, res) =>{
         console.log('error:' + data);
       });
     
+      var a;
         // send if last one
       if (py[i] === last) {
         console.log("*********ON THE LAST ONE: ", i);
@@ -96,6 +89,12 @@ app.post('/add', (req, res) =>{
           console.log(`Exit code is: ${code}`);
           // send back to client
           res.format({'application/json' () {
+            // convert to JSON then sent
+            // console.log("output before: ", output);
+            // output.replace(/\[|\]/g,'').split(',')
+            // console.log("ouput after: ", output);
+
+            // res.send({output});
             res.send(JSON.stringify(output))
           },
             default () {
@@ -111,106 +110,6 @@ app.post('/add', (req, res) =>{
   scrapeData(arr, last, res);
 
 
-
-    
-  ////////////// USING SPAWN ////////////////
-  // var final_servers = [];
-  // scraper = spawn('python', ['../scraper/scrape.py']) 
-  // scraper.stdout.on('data', function (data) {
-  //    // QUESTION re: data vs ${data} here!!! 
-  //     final_servers.push(`${data}`)
-  //     console.log("final_servers: ", final_servers);
-  //   });
-  
-  //   scraper.stderr.on('data', (data) => {
-  //     console.log(`stderr: ${data}`);
-  //   });
-    
-  //   scraper.on('close', (code) => {
-  //     console.log(`child process exited with code ${code}`);
-  //   });
-  // child_process.exec(command[, options][, callback])
-
-
-
-  /////////////// USING EXEC /////////////////
-  // exec('python', ['../scraper/scrape.py'], (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.error(`exec error: ${error}`);
-  //     return;
-  //   }
-  //   console.log(`stdout: ${stdout}`);
-  //   console.error(`stderr: ${stderr}`);
-  // });
-
-  // let scraper = spawn('python', ['../scraper/scrape.py', tag, pages]); 
-
-
-
-  /////////////////////////////////////
- 
-  // so i think the issue is an async/await issue
-  // because my console.logs run first 
-  // then my scraper runs
-
-    // make the servers array to be returned to user 
-    // var final_servers = [];
-
-    // function getServers() {
-      // loop through user tags
-      // let arr = [];
-      // var i = 0, len = tags.length;
-      // while (i < len) {
-        // let tag = tags[0];
-        // let pages = 2;
-        
-        // run the scraper
-        // let scraper = spawn('python', ['../scraper/scrape.py', tag, pages]); 
-        // console.log(scraper)
-        
-        // call function .on to access the output of scraper
-        // scraper.stdout.on('data', function (data) {
-          // arr.push(`${data}`);
-          // console.log(`${data}`);
-          // final_servers = await final_servers.push(`${data}`);
-          // return final_servers;
-          //return `${data}`
-          // console.log("arr: ", arr);
-          // console.log("final_servers: ", final_servers);
-        // });
-      // };
-
-     // getServers();
-     // console.log(test);
-      // final_servers = await arr
-      // console.log(final_servers);
-      // return final_servers
-    // };
-   
-
-    // console.log("final_servers after while loop: ", final_servers);
-  // convert JS object to string
-  // console.log("********FINAL_SERVERS:**** ", final_servers );
-  // console.log(final_servers);
-  // final_servers_str = JSON.stringify(final_servers)
-  // console.log(final_string)
-  // console.log("type of final_string...");
-  // console.log(typeof final_servers_str)
-  // console.log(final_servers_str);
-  
-  // res.status(200).send("I am a test");
-  
-  // sending servers back in JSON form
-  // res.format({
-  //   'application/json' () {
-  //     // res.send(JSON.stringify(final_servers_str))
-  //   },
-  //   default () {
-  //     res.status(406).send('Not Acceptable')
-  //   }
-  // });
-
-});
 
 // GET REQUEST FOR DEV
 // this will be removed

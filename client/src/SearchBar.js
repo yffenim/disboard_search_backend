@@ -7,7 +7,8 @@ export const SearchBar = ({
   tag4, setTag4, 
   tag5, setTag5 
 }) => { 
-  const [servers, setServers] = useState(null)
+  const [servers, setServers] = useState([]);
+  const [first, setFirst] = useState();
   const [headers, setHeaders] = useState(false);
   const [exclude1, setExclude1] = useState("");
   const [exclude2, setExclude2] = useState("");
@@ -42,9 +43,9 @@ export const SearchBar = ({
       return response.json()
     })
     .then(function(body){
-      // console.log(body);
-      setServers(body);
+      console.log(body);
       console.log(typeof body);
+      setServers(body);
     });
   };
 
@@ -154,6 +155,10 @@ export const SearchBar = ({
     </form> 
     <div>
       <h3>Returned servers</h3>
+        first: {first}
+      <br/>
+      <br/>
+      <br/>
         {servers} 
     </div>
     </div>

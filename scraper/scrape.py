@@ -72,9 +72,12 @@ for i in servers:
     if i not in unique_servers:
         unique_servers.append(i)
 
-# Convertto json and print to return to server 
-j = json.dumps(unique_servers, indent=4, sort_keys=True, default=str)
-print(j)
+# return as array bc no point doing json since we have to stringify in node anyway
+print(unique_servers);
+
+# Convert to json and print as json
+# j = json.dumps(unique_servers, indent=4, sort_keys=True, default=str)
+# print(j)
 
 
 

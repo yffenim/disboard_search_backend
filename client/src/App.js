@@ -37,41 +37,12 @@ const App = () => {
     const [visible, setVisible] = useState(false)
     const handleToggle = () => { setVisible(!visible)};
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-    fetch(url,{
-      method: 'POST',
-      body: JSON.stringify({
-        tag1: tag1,
-        tag2: tag2,
-        tag3: tag3,
-        tag4: tag4,
-        tag5: tag5,
-        exclude1: exclude1,
-        exclude2: exclude2,
-        exclude3: exclude3,
-        exclude4: exclude4,
-        exclude5: exclude5,
-      }),
-      headers: {"Content-Type": "application/json"}
-    })
-    .then(function(response){
-      return response.json()
-    })
-    .then(function(body){
-      console.log(body);
-    });
-  };
-
-
     return (
         <div className="App" style={{margin: "25px"}}>
             <button onClick={()=>{handleToggle()}}>
                 toggle dynamic msg
             </button>
             <SearchBar
-                handleSubmit={handleSubmit}
                 tag1={tag1} setTag1={setTag1}
                 tag2={tag2} setTag2={setTag2}
                 tag3={tag3} setTag3={setTag3}
