@@ -28,8 +28,6 @@ unique_servers = []
 
 # Iterate over each page for a tag
 for page in range(1, pages + 1):
-    print(tag)
-    print(page)
     url = f"https://disboard.org/servers/tag/{tag}/{page}?sort=-member_count"
     scraper = cloudscraper.create_scraper()
     resource = scraper.get(url).text

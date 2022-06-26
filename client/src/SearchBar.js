@@ -7,7 +7,8 @@ export const SearchBar = ({
   tag4, setTag4, 
   tag5, setTag5 
 }) => { 
-
+  const [servers, setServers] = useState(null)
+  const [headers, setHeaders] = useState(false);
   const [exclude1, setExclude1] = useState("");
   const [exclude2, setExclude2] = useState("");
   const [exclude3, setExclude3] = useState("");
@@ -18,9 +19,9 @@ export const SearchBar = ({
   const url = 'http://localhost:3333/add';
   const inputStyle = {margin: "10px", width: "100px"};
 
+  // get the desired servers
   const handleSubmit = (e) => {
     e.preventDefault();
-
     fetch(url,{
       method: 'POST',
       body: JSON.stringify({
@@ -41,11 +42,15 @@ export const SearchBar = ({
       return response.json()
     })
     .then(function(body){
-      console.log(body);
+      // console.log(body);
+      setServers(body);
+      console.log(typeof body);
     });
   };
 
+  
   return (
+    <div>
     <form
       action="/"
       method="get"
@@ -147,6 +152,11 @@ export const SearchBar = ({
         Search
       </button>
     </form> 
+    <div>
+      <h3>Returned servers</h3>
+        {servers} 
+    </div>
+    </div>
 
   )
 };

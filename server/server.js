@@ -7,18 +7,18 @@ require('dotenv').config({ path: './config.env' });
 var sys = require('util')
 const express = require('express');
 const cors = require('cors');
+
+// for calling and parsing script
 const bodyParser = require('body-parser');
-// for calling scripts 
+// for calling python scraper script
 const spawn = require('child_process').spawn;
-// const exec = require('child_process').exec;
-const util = require("util");
-const { exec } = require("child_process");
-const execProm = util.promisify(exec);
+// const { once } = require('events');
+const pages = 2; // current default for n pages to scrape
 
-
-
-// MongoDB driver connection
+// for MongoDB driver connection
 const dbo = require('./connect');
+
+// default to PORT 3333 and call express
 const PORT = process.env.PORT || 3333;
 const app = express();
 
@@ -39,52 +39,79 @@ app.post('/add', (req, res) =>{
   const json = req.body;
   const tags = [];
   const excludes = []; 
-  var scraper = null; 
-  // var final_servers = [];
   
   // save and get non-empty tags
-  // for (let key in json) {
-  //   let value = json[key];
-  //   if (value != "" && key.length < 5 ) {
-  //     tags.push(value);
-  //   } 
-  //   else if ( value != "" && key.length > 4 ) {
-  //     excludes.push(value);
-  //   }
-  // };
-  const tag = "buffy"
-  const pages = "2"
-  // save the process return from spawn calling scraper
-  const scraped_process = spawn('python', ['../scraper/scrape.py', tag, pages]);
-  // get the required output from completed process
-  function getStdout(process) {
-    // let result;
-    try {
-      process.stdout.on('data', function (data) {
-        // console.log(`stdout: ${data}`);
-        stdout = `${data}`;
-        console.log("stdout: ", stdout);
-        return stdout;
-        // return stdout;
-        // result = await final_server.push(`${data}`)
-      });
-    } catch (err) {
-      return err;
+  for (let key in json) {
+    let value = json[key];
+    if (value != "" && key.length < 5 ) {
+      tags.push(value);
+    } 
+    else if ( value != "" && key.length > 4 ) {
+      excludes.push(value);
     }
-    // return result
-  }
+  };
 
-  // call it asynchronously 
-  async function asyncWrapper() {
-    let result = await getStdout(scraped_process);
-    console.log(result)
-  }
+  // make array of scraper processes by tag
+  var arr = [];
+  for (let i = 0; i < tags.length; i++) {
+    let process = spawn('python', ['../scraper/scrape.py', tags[i], pages]);
+    arr.push(process);
+  };
+  const last = arr[arr.length-1];
+  // console.log(arr[0]);
+  // console.log(excludes);
 
-  asyncWrapper();
+  // var arr = [];
+
+  // const tag = "buffy";
+
+  // const scraper_process = spawn('python', ['../scraper/scrape.py', tag, pages]);
+  // const last = spawn('python', ['../scraper/scrape.py', "charmed", pages]);
+  // arr.push(scraper_process);
+  // arr.push(last);
+
+  var output;
+  async function scrapeData (py, last, res) {
+    output = '';
+
+    // WHY DOES THE WHILE LOOP NOT WORK HERE???
+    for (let i = 0; i < py.length; i++) {
+      py[i].stdin.setEncoding = 'utf-8';
+      py[i].stdout.on('data', (data) => {
+        // console.log(typeof data);
+        output += data.toString();
+        // console.log(typeof output);
+      });
+    
+      // Handle error output
+      py[i].stderr.on('data', (data) => {
+        console.log('error:' + data);
+      });
+    
+        // send if last one
+      if (py[i] === last) {
+        console.log("*********ON THE LAST ONE: ", i);
+
+        py[i].stdout.on('end', async function(code){
+          console.log(`Exit code is: ${code}`);
+          // send back to client
+          res.format({'application/json' () {
+            res.send(JSON.stringify(output))
+          },
+            default () {
+              res.status(406).send('Not Acceptable')
+            }
+          });
+        });
+        return 
+      }
+    }; // closing bracket for loop
+  }; // closing bracket for scrapeData()
+
+  scrapeData(arr, last, res);
 
 
 
-  // runScraper().then(res => console.log("result: ", res) );
     
   ////////////// USING SPAWN ////////////////
   // var final_servers = [];
@@ -121,8 +148,6 @@ app.post('/add', (req, res) =>{
 
 
   /////////////////////////////////////
-  // console.log(tags);
-  // console.log(excludes);
  
   // so i think the issue is an async/await issue
   // because my console.logs run first 
@@ -176,14 +201,14 @@ app.post('/add', (req, res) =>{
   // res.status(200).send("I am a test");
   
   // sending servers back in JSON form
-  res.format({
-    'application/json' () {
-      // res.send(JSON.stringify(final_servers_str))
-    },
-    default () {
-      res.status(406).send('Not Acceptable')
-    }
-  });
+  // res.format({
+  //   'application/json' () {
+  //     // res.send(JSON.stringify(final_servers_str))
+  //   },
+  //   default () {
+  //     res.status(406).send('Not Acceptable')
+  //   }
+  // });
 
 });
 
