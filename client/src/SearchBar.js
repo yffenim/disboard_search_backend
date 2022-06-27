@@ -155,11 +155,11 @@ export const SearchBar = ({
     </form> 
     <div>
       <h3>Returned servers</h3>
-        first: {first}
+        {/* first: {first} */}
       <br/>
       <br/>
       <br/>
-        {servers} 
+        {/* {servers} */} 
     </div>
     </div>
 

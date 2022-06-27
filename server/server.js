@@ -4,6 +4,12 @@
 // Loads the configuration from config.env to process.env
 require('dotenv').config({ path: './config.env' });
 
+// Load helper functions
+const helpers = require('./helpers');
+// const stringToHash = helpers.stringToHash;
+const formatServers = helpers.formatServers;
+const removeServers = helpers.removeServers;
+
 var sys = require('util')
 const express = require('express');
 const cors = require('cors');
@@ -17,6 +23,7 @@ const pages = 2; // current default for n pages to scrape
 
 // for MongoDB driver connection
 const dbo = require('./connect');
+const dbConnect = dbo.getDb();
 
 // default to PORT 3333 and call express
 const PORT = process.env.PORT || 3333;
@@ -35,12 +42,14 @@ app.use(express.urlencoded({ extended: true }));
 ////////// CONTROLLER ACTIONS //////////
 
 // POST REQUEST
-app.post('/add', (req, res) =>{
+app.post('/add', (req, res) => {
   const json = req.body;
-  // const tags = [["first array item"]];
   const tags = [];
   const excludes = []; 
+  var arr = [];
+  var output;
   
+
   // save and get non-empty tags
   for (let key in json) {
     let value = json[key];
@@ -52,27 +61,23 @@ app.post('/add', (req, res) =>{
     }
   };
 
+
   // make array of scraper processes by tag
-  var arr = [];
   for (let i = 0; i < tags.length; i++) {
     let process = spawn('python', ['../scraper/scrape.py', tags[i], pages]);
     arr.push(process);
   };
   const last = arr[arr.length-1];
 
+
   // make return object containing scraped servers
-  var output;
   async function scrapeData (py, last, res) {
     output = '';
-
     // WHY DOES MY OUTPUT CONTAIN TWO SETS OF EVERYTHING??
     for (let i = 0; i < py.length; i++) {
       py[i].stdin.setEncoding = 'utf-8';
       py[i].stdout.on('data', (data) => {
-        // console.log(typeof data);
         output += data.toString();
-        // console.log(output);
-        // console.log(typeof output);
       });
     
       // Handle error output
@@ -80,22 +85,27 @@ app.post('/add', (req, res) =>{
         console.log('error:' + data);
       });
     
-      var a;
-        // send if last one
+      // remove excluded and sent to client if last one
       if (py[i] === last) {
         console.log("*********ON THE LAST ONE: ", i);
 
         py[i].stdout.on('end', async function(code){
           console.log(`Exit code is: ${code}`);
+          // console.log(output);
+          
+          // convert string server data into hash objects
+          var included_servers = formatServers(output)
+          console.log(included_servers);
+          
+          // IF exclusion tags exist, remove them from servers 
+          // removeServers(included_servers);
+          // remove servers w/ exclusion tags
+          
+
           // send back to client
           res.format({'application/json' () {
-            // convert to JSON then sent
-            // console.log("output before: ", output);
-            // output.replace(/\[|\]/g,'').split(',')
-            // console.log("ouput after: ", output);
-
-            // res.send({output});
-            res.send(JSON.stringify(output))
+            // res.send(JSON.stringify(json_servers))
+            res.send(JSON.stringify(included_servers))
           },
             default () {
               res.status(406).send('Not Acceptable')
@@ -107,16 +117,40 @@ app.post('/add', (req, res) =>{
     }; // closing bracket for loop
   }; // closing bracket for scrapeData()
 
+  // CHANGE THIS () NAME
   scrapeData(arr, last, res);
 
+}); // CLOSING TAG FOR POST REQUEST
 
 
-// GET REQUEST FOR DEV
-// this will be removed
+
+
+
+//////////////////// LEARNING NOTES - TO BE REMOVED ////////////////
+app.post('/post', async function (req, res) {
+  const dbConnect = dbo.getDb();
+  const serverDoc = {
+    "Server Name": "THIS IS A TEST"
+  };
+
+  dbConnect
+    .collection("servers")
+    .insertOne(serverDoc, function (err, result) {
+      if (err) {
+        res.status(400).send("Error inserting servers!");
+      } else {
+        console.log(`Added a new server with id ${result.insertedId}`);
+        res.status(204).send();
+      }
+    });
+});
+
+
+
 app.get('/hello', async function (_req, res) {
   const dbConnect = dbo.getDb();
   collectionName = 'servers';
-
+  
   dbConnect
     .collection(collectionName)
     .find({})
@@ -129,6 +163,7 @@ app.get('/hello', async function (_req, res) {
       }
     });
 });
+
 
 
 //////////  Global error handling  //////////
@@ -149,4 +184,6 @@ dbo.connectToServer(function (err) {
     console.log(`Server is running on port: ${PORT}`);
   });
 });
+
+
 

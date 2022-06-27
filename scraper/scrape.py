@@ -48,6 +48,13 @@ for page in range(1, pages + 1):
         for tag_ in parent.find_all(class_="tag"):
             tag_name = tag_.find(class_="name")
             tags.append(tag_name.contents[0].strip())
+        
+        if len(tags) < 5:
+            missing = 5 - len(tags)
+            i=1
+            while ( i <= missing ):
+                tags.append("null")
+                i=i+1
 
         # Check servers without online counts
         if hasattr(server_online, 'contents'):
@@ -57,6 +64,8 @@ for page in range(1, pages + 1):
 
         # Create a server
         server = [
+            # SEARCH_TAG,
+            tag,
             server_name_link.contents[0].strip(),
             members_online_count,
             server_created_at,
@@ -73,7 +82,7 @@ for i in servers:
         unique_servers.append(i)
 
 # return as array bc no point doing json since we have to stringify in node anyway
-print(unique_servers);
+print(unique_servers)
 
 # Convert to json and print as json
 # j = json.dumps(unique_servers, indent=4, sort_keys=True, default=str)
