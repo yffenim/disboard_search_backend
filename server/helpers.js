@@ -1,16 +1,19 @@
 
 // set up array for returning to client
 function formatServers(servers_str) {
+  const regex0 = /\"/;
+  console.log(regex0.test(servers_str)); // true
+
   // split string input into arr of strings
-  var regex1 = /\]\,\ \[/;
-  var servers_arr = servers_str.split(regex1);
+  const regex1 = /\]\,\ \[/;
+  const servers_arr = servers_str.split(regex1);
   var servers_hashed = [];
   const keys_arr = ["Search Tag", "Server Name", "Members Online", "Creation Date", "Invite Link", "Tag 1", "Tag 2", "Tag 3", "Tag 4", "Tag 5"];
 
 // loop through arr of strings
   for (var i=0, n=servers_arr.length; i < n; ++i) {
     // for each server string object, split again into arr
-    var regex2 = /\'\,|\)\,/;
+    const regex2 = /\'\,|\)\,/;
     var values_arr = servers_arr[i].split(regex2);
     
     // make each server object into a nice hash
@@ -61,6 +64,7 @@ function removeQuotesAndSpaces(servers_hashed) {
       for (var k in hash) {
         // remove extra double qt and space from all values 
         // except for search tag and creation date
+        console.log(hash[k]);
         if (k !== "Creation Date" && k !== "Search Tag") {
           hash[k] = hash[k].substring(2);
         }; 

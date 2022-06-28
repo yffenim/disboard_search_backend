@@ -7,6 +7,8 @@ name = "pypi"
 cloudscraper = "*"
 discord = "*"
 bs4 = "*"
+pymongo = {extras = ["srv"], version = "*"}
+python-dotenv = "==0.13.0"
 
 [dev-packages]
 
