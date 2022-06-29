@@ -1,8 +1,8 @@
 # scrapes Disboard for servers matching input tag
 # input options: tag, number of pages to scrape, return destination
 # max # of pages is 50 
-# three return destinations: server, json, db
-
+# three return destinations: server, json, mongodb
+# please see docs for more 
 
 import sys
 import json
@@ -19,15 +19,13 @@ i = int(input_list[2])
 pages = i # Note: max amount of pages allowed is 50
 return_dest = input_list[3]
 
-# Set up array for returning as json
-list_for_db = []
-
 # Constants
 HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
 # Variables
 servers = []
 unique_servers = []
+list_for_db = []
 
 # Iterate over each page for a tag
 for page in range(1, pages + 1):
@@ -89,21 +87,34 @@ for i in servers:
     if i not in unique_servers:
         unique_servers.append(i)
 
-# return list for parsing by server
+# Return options
+# Return a stringified list to server
 if return_dest == 'server':
     print(unique_servers)
 
-# return JSON with dateTime removed?
+# Print a nice readable format of servers to terminal
+if return_dest == 'json':
+    servers_json = json.dumps(unique_servers, 
+                              indent=4, 
+                              sort_keys=True, 
+                              default=str)
+    print(servers_json)
+
+# Return all servers directly to DB
 if return_dest == 'mongodb':
     import certifi
     import pymongo
-
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
     ca = certifi.where()
-    URI = ("mongodb+srv://theadmin:wXnRCZh9S0wCfHtd@cluster0.diczg.mongodb.net/?retryWrites=true&w=majority")
+    password=os.getenv("PASSWORD")
+    URI = (f'mongodb+srv://theadmin:{password}@theclustername.diczg.mongodb.net/?retryWrites=true&w=majority')
 
+    # make the connection
     client = pymongo.MongoClient(URI, tlsCAFile=ca)
     db = client.discord
-    collection = db.test_servers
+    collection = db.servers
 
     # make keys
     keys = [
@@ -119,28 +130,14 @@ if return_dest == 'mongodb':
         'Tag 5'
     ]
 
-    # make values
-    # servers_json = json.dumps(unique_servers, 
-    #                           indent=4, 
-    #                           sort_keys=True, 
-    #                           default=str)
-
     # make return object
     for values in unique_servers:
         s = dict(zip(keys, values))
-
-        # connect to MongoDb and insert servers as documents
-        # ca = certifi.where()
-        # URI = ("mongodb+srv://theadmin:wXnRCZh9S0wCfHtd@cluster0.diczg.mongodb.net/?retryWrites=true&w=majority")
-
-        # client = pymongo.MongoClient(URI, tlsCAFile=ca)
-        # db = client.discord
-        # collection = db.test_servers
-        # collection.insert_one(s)
+        collection.insert_one(s)
 
         # note that insert_many is not working
         # collection.insert_many([list_for_db])
         
-    # to print out the servers as a list of dict, comment out next two lines
-        list_for_db.append(s)
-    print(list_for_db)
+    # to print out the servers, uncomment out next 2 lines:
+        # list_for_db.append(s)
+    # print(list_for_db)

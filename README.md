@@ -2,7 +2,7 @@
 
 This is the backend API for a Discord Server Search App with improved functiionality such as searching by multiple tags and by exlusion tags.
 
-The python script found in `/scraper/scrape.py` is adapted from: https://github.com/DiscordFederation/DisboardScraper
+The python script found in `/scripts/scrape.py` is adapted from: https://github.com/DiscordFederation/DisboardScraper
 
 
 # Repo Tree
@@ -26,7 +26,7 @@ server
 
 # Usage
 
-### Load the python script dependencies in the `scraper` directory:
+### Load the python script dependencies in the `scripts` directory:
 
 `cd scraper`
 
@@ -40,27 +40,30 @@ Install dependencies:
 
 You might need to manually install `cloudscraper`:
 
-`pipenv install cloudscaper`
+`pipenv install cloudscraper`
 
 **Note that you may need to manually install all the dependecies**
 
-In the event of an inexplicable error with parsing, please ensure that you are running a virtual env and  have all dependencies loaded in the right folder.
+In the event of an inexplicable error with parsing, please ensure that you are running a virtual env and have all dependencies loaded.
 
 ---
 
 ### Run scraper as standalone or debug
 
-The script expects three args: `<search tag>` `<total pages to scrape>` `<return type>`
 
-The first two are self-explanatory. The third can be set to `list` or `json`
+The script expects three args: `<tag>` `<pages>` `<destination>`
+
+The **tag** is self-explanatory. 
+
+The max amount of **pages** allowed by Discord is `50`.
+
+The destination can be: `server` to return to the express server, `json` to print to terminal in a nice format, or `mongodb` to directly insert into the database.
+
 
 ```
-python3 scrapy.py buffy 2 list
 python3 scrapy.py buffy 2 json
 
 ```
-
-The max amount of pages allowed by Discord is 50.
 
 Also noteworthy is that if you try to run a scraper from AWS Lambda, your generated IP from AWS's known range will be blocked even. If you know of a workaround to this, please let me know [here](https://stackoverflow.com/questions/72722566/aws-lambda-python-webscraping-unable-to-bypass-cloudfare-anti-bots-from-aws).
 
@@ -68,9 +71,9 @@ Also noteworthy is that if you try to run a scraper from AWS Lambda, your genera
 
 ### Run the Server
 
-`cd server`
+Navigate to `scripts/` directory and ensure that the scraper file's dependencies are installed. If they are, run the virutal env with `pipenv shell`. 
 
-Install dependencies:
+Navigate to `server/` and install dependencies:
 
 `npm install`
 
@@ -78,11 +81,17 @@ Run the server:
 
 `npm start` or `npm start --reset-cache`
 
+If you have an inexplicable python syntax error when accessing the server, please ensure you have followed the steps here.
+
 ---
 
-### Run the Client 
+### Run the demo client 
 
-Repeat the same steps as for server. 
+`cd ../client`
+
+`npm install`
+
+`npm start` or `npm start --reset-cache`
 
 --- 
 

@@ -1,8 +1,9 @@
-
-// set up array for returning to client
+// format the results from inclusion tag search
 function formatServers(servers_str) {
+  // console.log(servers_str)
+
   const regex0 = /\"/;
-  console.log(regex0.test(servers_str)); // true
+  // console.log(regex0.test(servers_str)); // true
 
   // split string input into arr of strings
   const regex1 = /\]\,\ \[/;
@@ -27,6 +28,27 @@ function formatServers(servers_str) {
 };
 
 
+// filter out the servers w/ exclusion tags
+function filterServers(servers_formatted, exclusion_tags,) {
+  tag_keys = ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5'];
+  // const exclusion_tags = ['gruppe', 'vampire', 'hannibal', 'roleplay'];
+
+  // check if any of the tags match w/ exclusion tags
+  let newHash = servers_formatted.map(function(hash, index) {
+    for (var k in hash) {
+    // remove the objects with matching tags
+      if ( tag_keys.includes(k) && exclusion_tags.includes(hash[k]) ) {
+        servers_formatted.splice(index, 1)
+      };
+    };
+    return hash;
+  });
+  //console.log("returned: ", servers_formatted)
+  return servers_formatted
+};
+
+
+
 
 // PRIVATE METHODS
 // TODO: NEEDS REFACTORING
@@ -39,6 +61,7 @@ function formatFirstAndLastObj(servers_hashed) {
   
   if ( servers_hashed.length > 1) {  
     let last = servers_hashed.pop();
+    // console.log(last)
     let l = last['Tag 5'].slice(0, -3);
     last['Tag 5'] = l;
     servers_hashed.push(last);
@@ -64,7 +87,7 @@ function removeQuotesAndSpaces(servers_hashed) {
       for (var k in hash) {
         // remove extra double qt and space from all values 
         // except for search tag and creation date
-        console.log(hash[k]);
+        // console.log(hash[k]);
         if (k !== "Creation Date" && k !== "Search Tag") {
           hash[k] = hash[k].substring(2);
         }; 
@@ -75,9 +98,10 @@ function removeQuotesAndSpaces(servers_hashed) {
           hash[k] = hash[k].substring(1);
         };
        
-        // get rid of extra single quote from last value of tags
-        if (k === "Tag 5") {
-          hash[k] = hash[k].slice(0,-1);
+        // get rid of extra single quote 
+        // from last value of Tag n where 1 < n < 4
+        if (k === "Tag 5" ) {
+          hash[k] = hash[k].replace(/'/g,"")
         };
 
         // remove the space before datetime 
@@ -102,5 +126,6 @@ function arrToHsh(k, v) {
 
 // export the main function
 module.exports.formatServers = formatServers;
+module.exports.filterServers = filterServers;
 
 

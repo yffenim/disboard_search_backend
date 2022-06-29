@@ -9,6 +9,8 @@ discord = "*"
 bs4 = "*"
 pymongo = {extras = ["srv"], version = "*"}
 python-dotenv = "==0.13.0"
+certifi = "*"
+requests = "*"
 
 [dev-packages]
 

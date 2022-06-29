@@ -8,7 +8,7 @@ require('dotenv').config({ path: './config.env' });
 const helpers = require('./helpers');
 // const stringToHash = helpers.stringToHash;
 const formatServers = helpers.formatServers;
-const removeServers = helpers.removeServers;
+const filterServers = helpers.filterServers;
 
 var sys = require('util')
 const express = require('express');
@@ -45,10 +45,9 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/add', (req, res) => {
   const json = req.body;
   const tags = [];
-  const excludes = []; 
+  const exclusion_tags = []; 
   var arr = [];
   var output;
-  
 
   // save and get non-empty tags
   for (let key in json) {
@@ -57,14 +56,13 @@ app.post('/add', (req, res) => {
       tags.push(value);
     } 
     else if ( value != "" && key.length > 4 ) {
-      excludes.push(value);
+      exclusion_tags.push(value);
     }
   };
 
-
   // make array of scraper processes by tag
   for (let i = 0; i < tags.length; i++) {
-    let process = spawn('python', ['../scraper/scrape.py', tags[i], pages]);
+    let process = spawn('python', ['../scripts/scrape.py', tags[i], pages, 'server']);
     arr.push(process);
   };
   const last = arr[arr.length-1];
@@ -94,18 +92,17 @@ app.post('/add', (req, res) => {
           // console.log(output);
           
           // convert string server data into hash objects
-          var included_servers = formatServers(output)
-          console.log(included_servers);
+          var formatted_servers = formatServers(output);
+          // console.log(typeof included_servers);
           
-          // IF exclusion tags exist, remove them from servers 
-          // removeServers(included_servers);
-          // remove servers w/ exclusion tags
-          
+          // filter out the excluded servers by tag 
+          var final_servers = filterServers(formatted_servers, exclusion_tags);
+          console.log("final_servers: ", final_servers);
 
           // send back to client
           res.format({'application/json' () {
-            // res.send(JSON.stringify(json_servers))
-            res.send(JSON.stringify(included_servers))
+            res.send(JSON.stringify(final_servers))
+            // res.send(JSON.stringify(included_servers))
           },
             default () {
               res.status(406).send('Not Acceptable')
