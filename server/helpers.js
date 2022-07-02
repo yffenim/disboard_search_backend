@@ -9,7 +9,18 @@ function formatServers(servers_str) {
   const regex1 = /\]\,\ \[/;
   const servers_arr = servers_str.split(regex1);
   var servers_hashed = [];
-  const keys_arr = ["Search Tag", "Server Name", "Members Online", "Creation Date", "Invite Link", "Tag 1", "Tag 2", "Tag 3", "Tag 4", "Tag 5"];
+  const keys_arr = [
+    "Search Tag", 
+    "Server Name", 
+    "Members Online", 
+    "Creation Date", 
+    "Invite Link", 
+    "Tag 1", 
+    "Tag 2", 
+    "Tag 3", 
+    "Tag 4", 
+    "Tag 5"
+  ];
 
 // loop through arr of strings
   for (var i=0, n=servers_arr.length; i < n; ++i) {
@@ -29,7 +40,7 @@ function formatServers(servers_str) {
 
 
 // filter out the servers w/ exclusion tags
-function filterServers(servers_formatted, exclusion_tags,) {
+function filterServers(servers_formatted, exclusion_tags) {
   tag_keys = ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5'];
   // const exclusion_tags = ['gruppe', 'vampire', 'hannibal', 'roleplay'];
 

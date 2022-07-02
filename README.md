@@ -15,7 +15,7 @@ client
 |---src // minimalist react client for demo of backend purposes only
 scripts
 |---scrape.py // scraper called in node.js
-|---populateDb.py // script to populate mongoDB
+|---scrape_all_servers.py // script to populate mongoDB
 server
 |---connect.js // connect to mongoDB
 |---helpers.js // parsing, formatting, and other helpers
@@ -73,9 +73,11 @@ Also noteworthy is that if you try to run a scraper from AWS Lambda, your genera
 
 ---
 
-### API Endpoints 
+### API Endpoints
 
-POST to `http://localhost:3333/add` and in your body, pleae include up to 5 inclusion and exclusion tags:
+`GET` to `http://localhost:3333/add` for an array of all tags.
+
+`POST` to `http://localhost:3333/add` and in your body, pleae include up to 5 inclusion and exclusion tags:
 
 ```lang-js
 	body: JSON.stringify({

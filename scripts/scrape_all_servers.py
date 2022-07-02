@@ -32,30 +32,17 @@ PAGES = 50
 # Variables
 servers = []
 unique_servers = []
-tags_to_do = ["btvs", "charmed"]
+tags_to_do = ["plants"]
 tags_done = []
  
 # recursively get tags from sraping all the tags
 def scrape_tags(tags):
     for tag in tags:
-        print(f"scraping {tag} from {tags}")
+        print(f"************scraping tag: {tag}************")
         done = tags.pop(0)
         tags_done.append(done)
         scraper(tag)
-        print(f"Tags done: {tags_done}")
-        print(f"removed first element, tags are now:{tags}")
         return tags if len(tags_to_do) == 0 else scrape_tags(tags)
-
-
-# def add_tag_to_todo(server):
-    # print("pretending to scrape things....")
-    # print("pretending to scrape things....")
-    # print("pretending to scrape things....")
-    # print("pretending to scrape things....")
-    # print("pretending to scrape things....")
-    # iterate through all the tags of a server
-    # if tag is not in done, add to to do
-    # if not tag in tags_done: tags_to_do.append(tag)
 
 # scraper the tag
 def scraper(tag):
@@ -140,19 +127,19 @@ def scraper(tag):
         invite_link = s['Invite Link']
         exists = bool(collection.find_one({'Invite Link': invite_link}))
         if not(exists):
-            print(f"ADDING {invite_link} to collection")
+            print(f"********ADDING {invite_link} to collection********")
             collection.insert_one(s)
         else:
-            print(f"server for {invite_link} already exists")
+            print(f"********server for {invite_link} already exists********")
 
         # only add tags to tags_to_do if tag is unique 
         for i in [1, 2, 3, 4, 5]:
             tag_n = f'Tag {i}'
             print(tag_n)
             server_tag = s[tag_n]
-            print(f"server_tag is: {server_tag}")
-
-            if server_tag not in tags_done: tags_to_do.append(server_tag)
-            print(f"tags_to_do is now: {tags_to_do}")
+            # print(f"server_tag is: {server_tag}")
+            if server_tag not in tags_done and server_tag not in tags_to_do:
+                tags_to_do.append(server_tag)
+            # print(f"tags_to_do is now: {tags_to_do}")
 
 scrape_tags(tags_to_do)

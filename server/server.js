@@ -1,4 +1,4 @@
-// ENTRY POINT, CONFIG INIT, ERROR HANDLING
+
 // CONTROLLER IS NOW HERE BC COULD NOT OTHERWISE GET BODY-PARSER TO WORK
 
 // Loads the configuration from config.env to process.env
@@ -40,9 +40,49 @@ app.use(express.urlencoded({ extended: true }));
 
 
 ////////// CONTROLLER ACTIONS //////////
+// ASK ABOUT CONSOLE OUTPUT //
+app.get('/tags', async function (_req, res) {
+  var collected_tags = []
+  const dbConnect = dbo.getDb();
+  const collection = dbConnect.collection('test_servers')
 
-// POST REQUEST
-app.post('/add', (req, res) => {
+  // supposed to return only the tags but isn't working??
+  collection
+    .find()
+    .project({ 
+      '_id': 0, 
+      'Tag 1': 1,
+      'Tag 2': 1,
+      'Tag 3': 1,
+      'Tag 4': 1,
+      'Tag 5': 1
+      }
+    )
+    .toArray(function (err, result) {
+      if (err) {
+        res.status(400).send(`Error fetching ${collectionName}`);
+      } else {
+        let tags = [];
+        result.map(function(h) {
+          Object.keys(h || {}).map(function(k) {
+            tags.push(h[k])
+          });
+        });
+        let uniqueTags = [...new Set(tags)];
+        res.format({'application/json' () {
+          res.json(uniqueTags);
+          },
+          default () {
+            res.status(406).send('Not Acceptable')
+          }
+        });
+      }
+    });
+});
+
+
+// POST REQUEST FOR DYNAMIC SERVER SEARCH
+app.post('/search', (req, res) => {
   const json = req.body;
   const tags = [];
   const exclusion_tags = []; 
@@ -104,9 +144,8 @@ app.post('/add', (req, res) => {
             res.send(JSON.stringify(final_servers))
             // res.send(JSON.stringify(included_servers))
           },
-            default () {
-              res.status(406).send('Not Acceptable')
-            }
+          default () {
+            res.status(406).send('Not Acceptable')}
           });
         });
         return 
@@ -138,25 +177,6 @@ app.post('/post', async function (req, res) {
       } else {
         console.log(`Added a new server with id ${result.insertedId}`);
         res.status(204).send();
-      }
-    });
-});
-
-
-
-app.get('/hello', async function (_req, res) {
-  const dbConnect = dbo.getDb();
-  collectionName = 'servers';
-  
-  dbConnect
-    .collection(collectionName)
-    .find({})
-    .limit(50)
-    .toArray(function (err, result) {
-      if (err) {
-        res.status(400).send(`Error fetching ${collectionName}`);
-      } else {
-        res.json(result);
       }
     });
 });
