@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3333;
 app.get('/tags', async function (_req, res) {
   var collected_tags = []
   const dbConnect = dbo.getDb();
-  const collection = dbConnect.collection('servers')
+  const collection = dbConnect.collection('test_servers')
 
   // supposed to return only the tags but isn't working??
   collection

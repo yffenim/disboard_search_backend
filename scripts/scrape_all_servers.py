@@ -32,7 +32,7 @@ PAGES = 50
 # Variables
 servers = []
 unique_servers = []
-tags_to_do = ["python", "ruby"]
+tags_to_do = ["demonslayer", "cooking"]
 tags_done = []
  
 # recursively get tags from sraping all the tags
