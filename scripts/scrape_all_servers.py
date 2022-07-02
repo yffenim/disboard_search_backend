@@ -23,7 +23,7 @@ URI = (f'mongodb+srv://theadmin:{password}@theclustername.diczg.mongodb.net/?ret
 # make the connection to DB
 client = pymongo.MongoClient(URI, tlsCAFile=ca)
 db = client.discord
-collection = db.test_servers
+collection = db.servers
 
 # Header for scraper
 HEADERS = {'User-Agent': 'Mozilla/5.0'}

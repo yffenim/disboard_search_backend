@@ -1,6 +1,7 @@
 /old/
-config.env
 /data/
+config.env
+# /server/app.log
 
 ### for node
 # Logs

@@ -1,25 +1,17 @@
+// SERVER + CONTROLLER
 
-// CONTROLLER IS NOW HERE BC COULD NOT OTHERWISE GET BODY-PARSER TO WORK
-
+const app = require('./app').app;
 // Loads the configuration from config.env to process.env
 require('dotenv').config({ path: './config.env' });
-
 // Load helper functions
 const helpers = require('./helpers');
-// const stringToHash = helpers.stringToHash;
 const formatServers = helpers.formatServers;
 const filterServers = helpers.filterServers;
 
-var sys = require('util')
 const express = require('express');
-const cors = require('cors');
 
-// for calling and parsing script
-const bodyParser = require('body-parser');
-// for calling python scraper script
 const spawn = require('child_process').spawn;
-// const { once } = require('events');
-const pages = 2; // current default for n pages to scrape
+const pages = 5; // current default for n pages to scrape
 
 // for MongoDB driver connection
 const dbo = require('./connect');
@@ -27,24 +19,13 @@ const dbConnect = dbo.getDb();
 
 // default to PORT 3333 and call express
 const PORT = process.env.PORT || 3333;
-const app = express();
-
-app.use(cors());
-// configure to accept JSON string literal
-app.use(express.json({ strict: false }));
-// parse POST req body
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-// for parsing application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true })); 
 
 
 ////////// CONTROLLER ACTIONS //////////
-// ASK ABOUT CONSOLE OUTPUT //
 app.get('/tags', async function (_req, res) {
   var collected_tags = []
   const dbConnect = dbo.getDb();
-  const collection = dbConnect.collection('test_servers')
+  const collection = dbConnect.collection('servers')
 
   // supposed to return only the tags but isn't working??
   collection
@@ -153,48 +134,18 @@ app.post('/search', (req, res) => {
     }; // closing bracket for loop
   }; // closing bracket for scrapeData()
 
-  // CHANGE THIS () NAME
   scrapeData(arr, last, res);
 
 }); // CLOSING TAG FOR POST REQUEST
 
 
-
-
-
-//////////////////// LEARNING NOTES - TO BE REMOVED ////////////////
-app.post('/post', async function (req, res) {
-  const dbConnect = dbo.getDb();
-  const serverDoc = {
-    "Server Name": "THIS IS A TEST"
-  };
-
-  dbConnect
-    .collection("servers")
-    .insertOne(serverDoc, function (err, result) {
-      if (err) {
-        res.status(400).send("Error inserting servers!");
-      } else {
-        console.log(`Added a new server with id ${result.insertedId}`);
-        res.status(204).send();
-      }
-    });
-});
-
-
-
-//////////  Global error handling  //////////
-app.use(function (err, _req, res) {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!!');
-});
-
+////////// SERVER //////////
 // perform a database connection when the server starts
 dbo.connectToServer(function (err) {
   if (err) {
     console.error(err);
     process.exit();
-  }
+  };
 
   // start the Express server
   app.listen(PORT, () => {

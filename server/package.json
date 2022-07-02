@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js"
   },
   "keywords": [],
@@ -16,11 +16,21 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "eslint": "^8.18.0",
+    "jest": "^28.1.2",
     "nodemon": "^2.0.18",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.4"
+  }, 
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/server/node_modules/",
+      "/node_modules/"
+    ]
   }
 }

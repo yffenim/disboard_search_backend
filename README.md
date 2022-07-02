@@ -11,15 +11,16 @@ The python script found in `/scripts/scrape.py` is adapted from: https://github.
 
 ```lang-js
 client 
-|---public 
 |---src // minimalist react client for demo of backend purposes only
 scripts
 |---scrape.py // scraper called in node.js
 |---scrape_all_servers.py // script to populate mongoDB
 server
+|---app.js // load app
+|---app.log // logging for server
 |---connect.js // connect to mongoDB
 |---helpers.js // parsing, formatting, and other helpers
-|---server.js // controller + routing 
+|---server.js // server + controller
 
 ```
 
@@ -75,9 +76,9 @@ Also noteworthy is that if you try to run a scraper from AWS Lambda, your genera
 
 ### API Endpoints
 
-`GET` to `http://localhost:3333/add` for an array of all tags.
+`GET` to `http://localhost:3333/search` for an array of all tags.
 
-`POST` to `http://localhost:3333/add` and in your body, pleae include up to 5 inclusion and exclusion tags:
+`POST` to `http://localhost:3333/tags` and in your body, pleae include up to 5 inclusion and exclusion tags:
 
 ```lang-js
 	body: JSON.stringify({
@@ -131,6 +132,16 @@ In the response, you will receive an array of `JSON`:
 
 2. `datetime` has been left as is. Import and parse accordingly.
 
+
+# Troubleshooting 
+
+If you get a weird python syntax error from the scraper script, check that you have:
+
+- run the virtual env in the script directory
+- loaded all dependencies for the script
+- run the server in the same shell as the virtual env 
+
+Note: Logs can be found in `server/app.log`
 
 # Report Bugs
 
