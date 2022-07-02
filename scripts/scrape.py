@@ -114,7 +114,7 @@ if return_dest == 'mongodb':
     # make the connection
     client = pymongo.MongoClient(URI, tlsCAFile=ca)
     db = client.discord
-    collection = db.servers
+    collection = db.test_servers
 
     # make keys
     keys = [
@@ -122,7 +122,7 @@ if return_dest == 'mongodb':
         'Server Name',
         'Members Online',
         'Creation Date',
-        "Invite Link",
+        'Invite Link',
         'Tag 1',
         'Tag 2',
         'Tag 3',
@@ -133,11 +133,19 @@ if return_dest == 'mongodb':
     # make return object
     for values in unique_servers:
         s = dict(zip(keys, values))
-        collection.insert_one(s)
 
-        # note that insert_many is not working
-        # collection.insert_many([list_for_db])
+        # only add to collection if server is unique
+        invite_link = s['Invite Link']
+        exists = bool(collection.find_one({'Invite Link': invite_link}))
         
+        if not(exists):
+            print(f"ADDING {invite_link} to collection")
+            collection.insert_one(s)
+        else:
+            print(f"server for {invite_link} already exists")
+
     # to print out the servers, uncomment out next 2 lines:
         # list_for_db.append(s)
     # print(list_for_db)
+
+

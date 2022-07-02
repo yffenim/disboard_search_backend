@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-
 export const SearchBar = ({ 
   tag1, setTag1,
   tag2, setTag2, 
@@ -8,7 +7,6 @@ export const SearchBar = ({
   tag5, setTag5 
 }) => { 
   const [servers, setServers] = useState([]);
-  const [first, setFirst] = useState();
   const [headers, setHeaders] = useState(false);
   const [exclude1, setExclude1] = useState("");
   const [exclude2, setExclude2] = useState("");
@@ -18,7 +16,10 @@ export const SearchBar = ({
   const inclusionPlaceholder = "inclusion tag";
   const exclusionPlaceholder = "exclusion tag";
   const url = 'http://localhost:3333/add';
-  const inputStyle = {margin: "10px", width: "100px"};
+  const inputStyle = {margin: "10px", width: "100px", marginBottom: "30px"};
+  const listStyle = {color: "#8b5cf6"};
+  const listFirstLine = {fontWeight: "bold", textDecorationLine: 'underline'};
+
 
   // get the desired servers
   const handleSubmit = (e) => {
@@ -44,7 +45,7 @@ export const SearchBar = ({
     })
     .then(function(body){
       console.log(body);
-      console.log(typeof body);
+      // console.log(typeof body);
       setServers(body);
     });
   };
@@ -59,7 +60,7 @@ export const SearchBar = ({
       onSubmit={handleSubmit}
     >
       <div>
-        <h2>Find Servers By Inclusion or Exclusion Tag</h2>
+        <h2>Find Servers By Inclusion And/Or Exclusion Tag</h2>
         <p style={{fontStyle: "italic", color: "#d4d4d4"}}>
           (You can select up to 5)
         </p>
@@ -109,8 +110,7 @@ export const SearchBar = ({
         placeholder={inclusionPlaceholder}
         name="s"
      />
-
-
+      <hr />
       {/* exclusion tags */}
       <br/>      
       <input
@@ -154,8 +154,23 @@ export const SearchBar = ({
       </button>
     </form> 
     <div>
-      <h3>Returned servers</h3>
-        {/* first: {first} */}
+      <h3 style={{marginTop: "40px"}}>Servers Found:</h3>
+        {servers.map((server, index) => {
+          return (
+            <ul key={index} style={{listStyleType:'none'}}>
+              <li><span style={listFirstLine}>Search Tag: <span style={listStyle}>{server["Search Tag"]}</span></span></li>
+              <li>Server Name: <span style={listStyle}>{server["Server Name"]}</span></li>
+              <li>Members Online: <span style={listStyle}>{server["Members Online"]}</span></li>
+              <li>Creation Date: <span style={listStyle}>{server["Creation Date"]}</span></li>
+              <li>Invite Link: <span style={listStyle}>{server["Invite Link"]}</span></li>
+              <li>Tag 1: <span style={listStyle}>{server["Tag 1"]}</span></li>
+              <li>Tag 2: <span style={listStyle}>{server["Tag 2"]}</span></li>
+              <li>Tag 3: <span style={listStyle}>{server["Tag 3"]}</span></li>
+              <li>Tag 4: <span style={listStyle}>{server["Tag 4"]}</span></li>
+              <li>Tag 5: <span style={listStyle}>{server["Tag 5"]}</span></li>
+            </ul>
+          );
+        })}
       <br/>
       <br/>
       <br/>
@@ -167,6 +182,8 @@ export const SearchBar = ({
 };
 
 
+
+
 // style={{
 //             margin: "-90px auto 30px",
 //             width: "100px",
@@ -174,3 +191,18 @@ export const SearchBar = ({
 //             objectFit: "cover",
 //             marginBottom: "0"
 //           }}
+//
+//
+// <div key={index}>
+//               <p>Search Tag: {server["Search Tag"]}</p>
+//               <p>Server Name: {server["Server Name"]}</p>
+//               <p>Members Online: {server["Members Online"]}</p>
+//               <p>Creation Date: {server["Creation Date"]}</p>
+//               <p>Invite Link: {server["Invite Link"]}</p>
+//               <p>Tag 1: {server["Tag 1"]}</p>
+//               <p>Tag 2: {server["Tag 2"]}</p>
+//               <p>Tag 3: {server["Tag 3"]}</p>
+//               <p>Tag 4: {server["Tag 4"]}</p>
+//               <p>Tag 5: {server["Tag 5"]}</p>
+//             </div>
+

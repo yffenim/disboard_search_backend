@@ -48,8 +48,6 @@ function filterServers(servers_formatted, exclusion_tags,) {
 };
 
 
-
-
 // PRIVATE METHODS
 // TODO: NEEDS REFACTORING
 // get rid of the [[ and ]] from first and last obj
@@ -87,7 +85,6 @@ function removeQuotesAndSpaces(servers_hashed) {
       for (var k in hash) {
         // remove extra double qt and space from all values 
         // except for search tag and creation date
-        // console.log(hash[k]);
         if (k !== "Creation Date" && k !== "Search Tag") {
           hash[k] = hash[k].substring(2);
         }; 

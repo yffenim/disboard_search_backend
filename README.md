@@ -26,25 +26,27 @@ server
 
 # Usage
 
-### Load the python script dependencies in the `scripts` directory:
+### Install dependencies and run server(s)
 
-`cd scraper`
+`cd scripts`
 
 Run a virtual shell:
 
 `pipenv shell`
 
-Install dependencies: 
+Install dependencies with makefile:
 
-`pipenv install` 
+`make`
 
-You might need to manually install `cloudscraper`:
+In the event of an inexplicable python error with parsing, please ensure that you are running a virtual env and have all dependencies loaded.
 
-`pipenv install cloudscraper`
+Run the express server:
 
-**Note that you may need to manually install all the dependecies**
+`cd ../server && npm start`
 
-In the event of an inexplicable error with parsing, please ensure that you are running a virtual env and have all dependencies loaded.
+If needed, run the react client:
+
+`cd ../client && npm start`
 
 ---
 
@@ -59,6 +61,8 @@ The max amount of **pages** allowed by Discord is `50`.
 
 The destination can be: `server` to return to the express server, `json` to print to terminal in a nice format, or `mongodb` to directly insert into the database.
 
+For example:
+
 
 ```
 python3 scrapy.py buffy 2 json
@@ -68,32 +72,6 @@ python3 scrapy.py buffy 2 json
 Also noteworthy is that if you try to run a scraper from AWS Lambda, your generated IP from AWS's known range will be blocked even. If you know of a workaround to this, please let me know [here](https://stackoverflow.com/questions/72722566/aws-lambda-python-webscraping-unable-to-bypass-cloudfare-anti-bots-from-aws).
 
 ---
-
-### Run the Server
-
-Navigate to `scripts/` directory and ensure that the scraper file's dependencies are installed. If they are, run the virutal env with `pipenv shell`. 
-
-Navigate to `server/` and install dependencies:
-
-`npm install`
-
-Run the server:
-
-`npm start` or `npm start --reset-cache`
-
-If you have an inexplicable python syntax error when accessing the server, please ensure you have followed the steps here.
-
----
-
-### Run the demo client 
-
-`cd ../client`
-
-`npm install`
-
-`npm start` or `npm start --reset-cache`
-
---- 
 
 ### API Endpoints 
 
@@ -147,9 +125,7 @@ In the response, you will receive an array of `JSON`:
 
 # Dev Notes
 
-1. Inner single quotes (apostrophes)  have been removed; you will instead see an empty space where there should be a single quote. 
-
-For example, instead of the string `"Devil's Land"`, you will receive  `"Devil s Land"`. Parse accordingly.
+1. Inner single quotes (apostrophes)  have been removed; you will instead see an empty space where there should be a single quote. For example, instead of the string `"Devil's Land"`, you will receive  `"Devil s Land"`. Parse accordingly.
 
 2. `datetime` has been left as is. Import and parse accordingly.
 
