@@ -132,6 +132,7 @@ In the response, you will receive an array of `JSON`:
 
 2. `datetime` has been left as is. Import and parse accordingly.
 
+3. The current mongo collection in use is found at `TheClusterName - discord.test_servers`
 
 # Troubleshooting 
 
@@ -145,4 +146,4 @@ Note: Logs can be found in `server/app.log`
 
 # Report Bugs
 
-Please let me know at: `sujetdev@sudomail.com`
+Please let me know at: `sujetdev@sudomail.com` and include screenshots of the logs and other relevant details.
